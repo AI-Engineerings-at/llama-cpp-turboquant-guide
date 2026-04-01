@@ -1,3 +1,23 @@
+---
+title: TurboQuant on RTX 3090 — 100K Context, 4.3x KV-Cache Compression
+emoji: 🚀
+colorFrom: blue
+colorTo: purple
+sdk: static
+pinned: true
+license: cc-by-4.0
+tags:
+  - llm
+  - quantization
+  - kv-cache
+  - turboquant
+  - benchmark
+  - rtx3090
+  - consumer-hardware
+  - mistral
+  - llama-cpp
+---
+
 # llama-cpp-turboquant-guide
 
 <div align="center">
