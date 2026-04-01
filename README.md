@@ -69,17 +69,17 @@ Raw data: [`results/turboquant-rtx3090-2026-04-01.json`](results/turboquant-rtx3
 
 ### RTX 4070 Laptop (8 GB) — Llama-3.1-8B-Instruct Q4_K_M
 
-*Average of 3 independent benchmark runs.*
+*2 independent benchmark sessions verified.*
 
 | | Baseline (f16) | TurboQuant turbo3 | Delta |
 |--|:--------------:|:-----------------:|:-----:|
 | **Context** | 8,192 tokens | **64,000 tokens** | **+7.8×** |
 | **VRAM** | 5.7 GB | 6.2 GB | +0.54 GB only |
-| **Tokens/s** | 49.8 | 48.2 | **−3.2%** |
+| **Tokens/s (avg)** | 49.8 | 47.5 | **−4.6%** |
 
-> **7.8× more context. +0.5 GB VRAM. −3% speed. Even better ratio on smaller GPU.**
+> **7.8× more context. +0.5 GB VRAM. −5% speed. Consistent across both runs.**
 
-Raw data: [`results/turboquant-4070-results-2026-04-01.json`](results/turboquant-4070-results-2026-04-01.json)
+Raw data: [`results/turboquant-4070-results-2026-04-01.json`](results/turboquant-4070-results-2026-04-01.json) · [`results/turboquant-4070-laptop-2026-04-01.json`](results/turboquant-4070-laptop-2026-04-01.json)
 
 ### Cross-GPU Summary
 
