@@ -23,17 +23,21 @@
 ## 📊 Results
 
 Tested on **NVIDIA RTX 3090 (24 GB VRAM)** with **Mistral-Small-3.2-24B Q4_K_M**.
+Results are the average of **two independent benchmark runs** (April 1, 2026).
 
 | | Baseline (f16) | TurboQuant turbo3 | Delta |
 |--|:--------------:|:-----------------:|:-----:|
 | **Context** | 8,192 tokens | **100,000 tokens** | **+12.2×** |
-| **VRAM** | 15.4 GB | 17.2 GB | +1.8 GB only |
-| **Tokens/s** | 49.2 | 45.0 | −8.5% |
+| **VRAM** | 15.5 GB | 17.4 GB | +1.9 GB only |
+| **Tokens/s** | 50.2 | 46.0 | **−8.3%** |
 | **KV-Cache size** | ~1 GB (f16) | ~2.8 GB (3-bit) | **4.3× compression** |
 
-> **12× more context. +11% VRAM. −8% speed. Same model weights.**
+> **12× more context. +12% VRAM. −8% speed. Same model weights.**
 
-Raw data: [`results/turboquant-rtx3090-2026-04-01.json`](results/turboquant-rtx3090-2026-04-01.json)
+**Run 1 (cold):** Baseline 49.2 TPS / 15,408 MB → Turbo3 45.0 TPS / 17,224 MB
+**Run 2 (warm, idle GPU):** Baseline 51.2 TPS / 15,695 MB → Turbo3 47.1 TPS / 17,581 MB
+
+Raw data: [`results/turboquant-rtx3090-2026-04-01.json`](results/turboquant-rtx3090-2026-04-01.json) · [`results/turboquant-rtx3090-2026-04-01-v2.json`](results/turboquant-rtx3090-2026-04-01-v2.json)
 
 ---
 

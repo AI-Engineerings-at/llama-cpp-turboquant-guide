@@ -1,0 +1,36 @@
+{
+  "run_id": "v2-verification-2026-04-01",
+  "timestamp": "2026-04-01T00:00:00Z",
+  "hardware": {
+    "gpu": "RTX 3090",
+    "vram_total_mb": 24576
+  },
+  "baseline": {
+    "cache_type": "f16",
+    "ctx": 8192,
+    "port": 8180,
+    "vram_used_mb": 15695,
+    "tps_runs": [51.01, 51.07, 51.44],
+    "tps_avg": 51.17
+  },
+  "turbo3": {
+    "cache_type": "turbo3",
+    "ctx": 100000,
+    "port": 8182,
+    "vram_used_mb": 17581,
+    "tps_runs": [47.34, 46.90, 46.93],
+    "tps_avg": 47.06
+  },
+  "delta": {
+    "context_multiplier": 12.21,
+    "vram_overhead_mb": 1886,
+    "tps_delta_pct": -8.03
+  },
+  "model": "mistralai_Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M.gguf",
+  "image": "turboquant-plus:feature",
+  "notes": [
+    "VRAM was nearly idle at start (550 MB used, 23777 MB free) — no unloading needed",
+    "Port 8182 used for turbo3 (8181 occupied by ocr-api-waitress)",
+    "v2 verification confirms v1 results: turbo3 enables 12x context at +1.9 GB VRAM cost and -8% TPS"
+  ]
+}
