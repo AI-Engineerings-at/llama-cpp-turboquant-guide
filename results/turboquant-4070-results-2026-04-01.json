@@ -1,0 +1,38 @@
+{
+  "date": "2026-04-01",
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "vram_gb": 8,
+    "node": ".91 (dev-pc-legion)"
+  },
+  "model": "Meta-Llama-3.1-8B-Instruct-Q4_K_M",
+  "model_size_gb": 4.7,
+  "runs": 3,
+  "baseline": {
+    "ctx": 8192,
+    "kv_type": "f16",
+    "vram_mb": 5835,
+    "tps_runs": [
+      50.01,
+      49.87,
+      49.61
+    ],
+    "tps_avg": 49.83
+  },
+  "turboquant": {
+    "ctx": 64000,
+    "kv_type": "turbo3",
+    "vram_mb": 6383,
+    "tps_runs": [
+      48.21,
+      48.26,
+      48.22
+    ],
+    "tps_avg": 48.23
+  },
+  "delta": {
+    "ctx_multiplier": 7.8,
+    "vram_delta_gb": 0.54,
+    "tps_delta_pct": -3.2
+  }
+}

@@ -1,5 +1,5 @@
 ---
-title: TurboQuant on RTX 3090 — 100K Context, 4.3x KV-Cache Compression
+title: TurboQuant on Consumer GPUs — 100K Context on RTX 3090, 64K on RTX 4070
 emoji: 🚀
 colorFrom: blue
 colorTo: purple
@@ -13,6 +13,7 @@ tags:
   - turboquant
   - benchmark
   - rtx3090
+  - rtx4070
   - consumer-hardware
   - mistral
   - llama-cpp
@@ -46,8 +47,11 @@ tags:
 
 ## 📊 Results
 
-Tested on **NVIDIA RTX 3090 (24 GB VRAM)** with **Mistral-Small-3.2-24B Q4_K_M**.
-Results are the average of **two independent benchmark runs** (April 1, 2026).
+Tested on two consumer GPUs. Results verified across multiple independent runs (April 1, 2026).
+
+### RTX 3090 (24 GB) — Mistral-Small-3.2-24B Q4_K_M
+
+*Average of 2 independent benchmark runs.*
 
 | | Baseline (f16) | TurboQuant turbo3 | Delta |
 |--|:--------------:|:-----------------:|:-----:|
@@ -58,10 +62,33 @@ Results are the average of **two independent benchmark runs** (April 1, 2026).
 
 > **12× more context. +12% VRAM. −8% speed. Same model weights.**
 
-**Run 1 (cold):** Baseline 49.2 TPS / 15,408 MB → Turbo3 45.0 TPS / 17,224 MB
-**Run 2 (warm, idle GPU):** Baseline 51.2 TPS / 15,695 MB → Turbo3 47.1 TPS / 17,581 MB
+Run 1 (cold): Baseline 49.2 TPS / 15,408 MB → Turbo3 45.0 TPS / 17,224 MB
+Run 2 (warm): Baseline 51.2 TPS / 15,695 MB → Turbo3 47.1 TPS / 17,581 MB
 
 Raw data: [`results/turboquant-rtx3090-2026-04-01.json`](results/turboquant-rtx3090-2026-04-01.json) · [`results/turboquant-rtx3090-2026-04-01-v2.json`](results/turboquant-rtx3090-2026-04-01-v2.json)
+
+### RTX 4070 Laptop (8 GB) — Llama-3.1-8B-Instruct Q4_K_M
+
+*Average of 3 independent benchmark runs.*
+
+| | Baseline (f16) | TurboQuant turbo3 | Delta |
+|--|:--------------:|:-----------------:|:-----:|
+| **Context** | 8,192 tokens | **64,000 tokens** | **+7.8×** |
+| **VRAM** | 5.7 GB | 6.2 GB | +0.54 GB only |
+| **Tokens/s** | 49.8 | 48.2 | **−3.2%** |
+
+> **7.8× more context. +0.5 GB VRAM. −3% speed. Even better ratio on smaller GPU.**
+
+Raw data: [`results/turboquant-4070-results-2026-04-01.json`](results/turboquant-4070-results-2026-04-01.json)
+
+### Cross-GPU Summary
+
+| GPU | VRAM | Model | Max Context (turbo3) | Speed Loss |
+|-----|------|-------|---------------------|-----------|
+| RTX 3090 | 24 GB | Mistral-Small-3.2 24B | 100,000 tokens | −8.3% |
+| RTX 4070 Laptop | 8 GB | Llama-3.1 8B | 64,000 tokens | −3.2% |
+
+TurboQuant scales with the GPU: the principle (+7-12× context, minimal speed loss) holds across hardware classes.
 
 ---
 
