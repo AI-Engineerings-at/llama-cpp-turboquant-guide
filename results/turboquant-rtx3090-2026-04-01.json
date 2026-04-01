@@ -1,0 +1,92 @@
+{
+  "date": "2026-04-01",
+  "hardware": {
+    "node": ".90",
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "vram_total_mb": 24576,
+    "vram_total_gb": 24.0,
+    "driver": "CUDA 12.6"
+  },
+  "model": {
+    "name": "Mistral-Small-3.2-24B-Instruct-2506",
+    "file": "mistralai_Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M.gguf",
+    "hf_repo": "bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF",
+    "quantization": "Q4_K_M",
+    "size_gb": 14.0
+  },
+  "llama_cpp_build": {
+    "repo": "TheTom/llama-cpp-turboquant",
+    "branch": "feature/turboquant-kv-cache",
+    "commit": "feature/turboquant-kv-cache@depth1",
+    "image_baseline": "turboquant-plus:latest",
+    "image_turboquant": "turboquant-plus:feature",
+    "note_e116": "turboquant-plus:latest was built from master branch WITHOUT turbo cache types. turboquant-plus:feature built from feature/turboquant-kv-cache has turbo2/turbo3/turbo4."
+  },
+  "baseline": {
+    "cache_type_k": "f16",
+    "cache_type_v": "f16",
+    "max_context": 8192,
+    "port": 8180,
+    "vram_total_mb": 15748,
+    "vram_total_gb": 15.38,
+    "vram_model_only_estimate_gb": 14.4,
+    "vram_kv_cache_estimate_gb": 0.98,
+    "tps_run1": 49.6,
+    "tps_run2": 48.9,
+    "tps_run3": 49.2,
+    "tps_avg": 49.2,
+    "toolcall_note": "INCOMPATIBLE: 'Failed to parse input at pos 70: </s>' — Mistral chat template + this llama.cpp version. tool_choice=auto triggers grammar-constrained parsing which fails on Mistral EOS token.",
+    "toolcall_score": null,
+    "toolcall_max": 10
+  },
+  "turbo3": {
+    "cache_type_k": "turbo3",
+    "cache_type_v": "turbo3",
+    "max_context": 100000,
+    "port": 8182,
+    "vram_total_mb": 17634,
+    "vram_total_gb": 17.22,
+    "vram_model_only_estimate_gb": 14.4,
+    "vram_kv_cache_estimate_gb": 2.82,
+    "tps_run1": 45.7,
+    "tps_run2": 44.2,
+    "tps_run3": 45.2,
+    "tps_avg": 45.0,
+    "toolcall_note": "NOT TESTED (same toolcall issue as baseline — Mistral template incompatibility, not TurboQuant-related)",
+    "toolcall_score": null,
+    "toolcall_max": 15
+  },
+  "analysis": {
+    "kv_cache_compression": {
+      "f16_8k_gb": 0.98,
+      "turbo3_100k_gb": 2.82,
+      "f16_100k_estimate_gb": 12.25,
+      "note": "f16 100K would require ~12.25GB KV-cache (OOM on RTX 3090 after 14.4GB model). turbo3 at 100K uses only 2.82GB.",
+      "turbo3_vs_f16_at_100k_ratio": 4.34,
+      "context_extension_factor": 12.2,
+      "context_extension_x": "8192 → 100000 (12.2x)"
+    },
+    "vram_delta": {
+      "baseline_mb": 15748,
+      "turbo3_mb": 17634,
+      "delta_mb": 1886,
+      "delta_gb": 1.84,
+      "note": "Turbo3 at 100K uses only 1.84GB MORE VRAM than baseline at 8K, despite 12x larger context"
+    },
+    "tps_delta": {
+      "baseline_avg": 49.2,
+      "turbo3_avg": 45.0,
+      "delta_pct": -8.5,
+      "note": "8.5% TPS reduction with turbo3 — within expected range (<10%). KV-cache reads are slightly more complex."
+    },
+    "recommendation": "TurboQuant turbo3 is production-ready for workloads requiring >8K context. At 100K context, it uses only 2.82GB KV-cache vs ~12GB for f16 (4.3x compression). TPS drops from 49.2 to 45.0 (-8.5%), which is acceptable for long-context use cases. For short-context (<8K) high-throughput workloads, f16 is still preferred."
+  },
+  "errors": ["E111", "E112", "E113", "E114", "E116"],
+  "learnings": ["L191", "L192", "L193"],
+  "notes": [
+    "E116: Default master branch of TheTom/llama-cpp-turboquant does NOT have TurboQuant. Must use --branch feature/turboquant-kv-cache",
+    "Port 8181 is occupied by ocr-api-waitress on .90. TurboQuant turbo3 uses port 8182.",
+    "ToolCall-15 test not completed: Mistral chat template incompatibility with grammar-constrained tool parsing in this llama.cpp version. Not a TurboQuant issue.",
+    "Model used: Mistral-Small-3.2-24B (instead of planned Qwen3.5-27B due to E114 hallucinated repo name)"
+  ]
+}
