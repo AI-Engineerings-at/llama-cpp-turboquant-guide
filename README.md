@@ -22,6 +22,7 @@ tags:
 
 <div align="center">
 
+[![GitHub](https://img.shields.io/badge/GitHub-AI--Engineerings--at%2Fllama--cpp--turboquant--guide-181717?logo=github)](https://github.com/AI-Engineerings-at/llama-cpp-turboquant-guide)
 ![TurboQuant](https://img.shields.io/badge/TurboQuant-turbo3%20KV--Cache-blueviolet)
 ![Context](https://img.shields.io/badge/Context-100%2C000%20tokens-brightgreen)
 ![GPU](https://img.shields.io/badge/GPU-RTX%203090%2024GB-76b900?logo=nvidia)
@@ -33,6 +34,9 @@ tags:
 **100,000 token context on a single RTX 3090 — verified, reproducible, step-by-step.**
 
 *Based on [TurboQuant (ICLR 2026, arXiv:2504.19874)](https://arxiv.org/abs/2504.19874)*
+
+**📦 [GitHub: AI-Engineerings-at/llama-cpp-turboquant-guide](https://github.com/AI-Engineerings-at/llama-cpp-turboquant-guide)**
+— Dockerfile · Scripts · Raw benchmark JSON · German white paper
 
 [Results](#-results) · [Quick Start](#-quick-start) · [How It Works](#-how-it-works) · [Errors & Fixes](#-errors--fixes) · [Deutsch](#-deutsch)
 
