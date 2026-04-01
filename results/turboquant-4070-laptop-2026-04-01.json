@@ -1,0 +1,51 @@
+{
+  "run_id": "rtx4070-laptop-2026-04-01",
+  "timestamp": "2026-04-01T17:55:00Z",
+  "hardware": {
+    "gpu": "RTX 4070 Laptop GPU",
+    "vram_total_mb": 8188,
+    "node": ".91 (dev-pc-legion)"
+  },
+  "model": {
+    "name": "Meta-Llama-3.1-8B-Instruct-Q4_K_M",
+    "size_gb": 4.9,
+    "repo": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF"
+  },
+  "baseline": {
+    "cache_type": "f16",
+    "ctx": 8192,
+    "port": 8183,
+    "vram_used_mb": 5837,
+    "tps_runs": [49.71, 49.71, 49.71],
+    "tps_avg": 49.71
+  },
+  "turbo3": {
+    "cache_type": "turbo3",
+    "ctx": 64000,
+    "port": 8184,
+    "vram_used_mb": 6385,
+    "tps_runs": [46.87, 46.48, 46.70],
+    "tps_avg": 46.68
+  },
+  "delta": {
+    "context_multiplier": 7.81,
+    "vram_overhead_mb": 548,
+    "tps_delta_pct": -6.10
+  },
+  "reference_rtx3090": {
+    "baseline_tps": 51.17,
+    "turbo3_tps": 47.06,
+    "turbo3_ctx": 100000,
+    "model": "mistral-small3.2-24B-Q4_K_M",
+    "baseline_ctx": 8192
+  },
+  "notes": [
+    "VRAM total: 8188 MiB (RTX 4070 Laptop). VRAM idle at test start: 0 MiB used.",
+    "ctx=64000 chosen for turbo3 (8x baseline) — stays within 8GB VRAM envelope at 6385 MiB",
+    "ctx=100000 was not tested — estimated VRAM ~7400+ MiB would be too close to 8188 MiB limit",
+    "Model size: 4.9 GB on disk (larger than nominal 4.7 GB estimate)",
+    "MSYS_NO_PATHCONV=1 required on Windows Git Bash to prevent /models path mangling (Gotcha #14)",
+    "TPS consistency: baseline all runs identical at 49.71 TPS (very stable generation on RTX 4070)",
+    "RTX 3090 comparison: used 24B model at ctx=100000; RTX 4070 uses 8B model at ctx=64000 — different tier"
+  ]
+}
