@@ -51,21 +51,18 @@ Tested on two consumer GPUs. Results verified across multiple independent runs (
 
 ### RTX 3090 (24 GB) — Mistral-Small-3.2-24B Q4_K_M
 
-*Average of 2 independent benchmark runs.*
+*4 independent benchmark runs, 15 total measurements.*
 
 | | Baseline (f16) | TurboQuant turbo3 | Delta |
 |--|:--------------:|:-----------------:|:-----:|
 | **Context** | 8,192 tokens | **100,000 tokens** | **+12.2×** |
-| **VRAM** | 15.5 GB | 17.4 GB | +1.9 GB only |
-| **Tokens/s** | 50.2 | 46.0 | **−8.3%** |
+| **VRAM** | 15.3 GB | 17.1 GB | +1.8 GB only |
+| **Tokens/s** | 51.0 | 47.2 | **−7.5%** |
 | **KV-Cache size** | ~1 GB (f16) | ~2.8 GB (3-bit) | **4.3× compression** |
 
-> **12× more context. +12% VRAM. −8% speed. Same model weights.**
+> **12× more context. +12% VRAM. −7.5% speed. Same model weights.**
 
-Run 1 (cold): Baseline 49.2 TPS / 15,408 MB → Turbo3 45.0 TPS / 17,224 MB
-Run 2 (warm): Baseline 51.2 TPS / 15,695 MB → Turbo3 47.1 TPS / 17,581 MB
-
-Raw data: [`results/turboquant-rtx3090-2026-04-01.json`](results/turboquant-rtx3090-2026-04-01.json) · [`results/turboquant-rtx3090-2026-04-01-v2.json`](results/turboquant-rtx3090-2026-04-01-v2.json)
+Raw data: [`results/turboquant-3090-all-runs-2026-04.json`](results/turboquant-3090-all-runs-2026-04.json) (all 4 runs)
 
 ### RTX 4070 Laptop (8 GB) — Llama-3.1-8B-Instruct Q4_K_M
 
@@ -83,10 +80,10 @@ Raw data: [`results/turboquant-4070-results-2026-04-01.json`](results/turboquant
 
 ### Cross-GPU Summary
 
-| GPU | VRAM | Model | Max Context (turbo3) | Speed Loss |
-|-----|------|-------|---------------------|-----------|
-| RTX 3090 | 24 GB | Mistral-Small-3.2 24B | 100,000 tokens | −8.3% |
-| RTX 4070 Laptop | 8 GB | Llama-3.1 8B | 64,000 tokens | −3.2% |
+| GPU | VRAM | Model | Max Context (turbo3) | Speed Loss | Runs |
+|-----|------|-------|---------------------|-----------|------|
+| RTX 3090 | 24 GB | Mistral-Small-3.2 24B | 100,000 tokens | −7.5% | 4 |
+| RTX 4070 Laptop | 8 GB | Llama-3.1 8B | 64,000 tokens | −4.6% | 2 |
 
 TurboQuant scales with the GPU: the principle (+7-12× context, minimal speed loss) holds across hardware classes.
 

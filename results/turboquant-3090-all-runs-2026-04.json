@@ -1,0 +1,81 @@
+{
+  "date": "2026-04-01 / 2026-04-02",
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "vram_gb": 24,
+    "node": ".90 (win-pc-gpu)"
+  },
+  "model": "Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M",
+  "model_size_gb": 13.3,
+  "total_runs": 4,
+  "total_measurements": {
+    "baseline": 8,
+    "turboquant": 7
+  },
+  "runs": [
+    {
+      "run": 1,
+      "note": "cold",
+      "baseline_tps": 49.2,
+      "baseline_vram_mb": 15408,
+      "turbo3_tps": 45.0,
+      "turbo3_vram_mb": 17224
+    },
+    {
+      "run": 2,
+      "note": "warm",
+      "baseline_tps": 51.2,
+      "baseline_vram_mb": 15695,
+      "turbo3_tps": 47.1,
+      "turbo3_vram_mb": 17581
+    },
+    {
+      "run": 3,
+      "note": "fresh session 2026-04-02",
+      "baseline_tps_runs": [
+        51.39,
+        51.47,
+        51.29
+      ],
+      "baseline_tps_avg": 51.38,
+      "baseline_vram_mb": 15758,
+      "turbo3_tps_runs": [
+        48.44,
+        47.18,
+        48.4
+      ],
+      "turbo3_tps_avg": 48.01,
+      "turbo3_vram_mb": 17644
+    },
+    {
+      "run": 4,
+      "note": "fresh session 2026-04-02",
+      "baseline_tps_runs": [
+        51.2,
+        51.15,
+        50.92
+      ],
+      "baseline_tps_avg": 51.09,
+      "baseline_vram_mb": 15758,
+      "turbo3_tps_runs": [
+        47.13,
+        46.81
+      ],
+      "turbo3_tps_avg": 46.97,
+      "turbo3_vram_mb": 17644
+    }
+  ],
+  "summary": {
+    "ctx": {
+      "baseline": 8192,
+      "turboquant": 100000,
+      "multiplier": 12.2
+    },
+    "baseline_tps_avg": 50.98,
+    "turbo3_tps_avg": 47.15,
+    "tps_delta_pct": -7.5,
+    "baseline_vram_mb_avg": 15655,
+    "turbo3_vram_mb_avg": 17523,
+    "vram_delta_gb": 1.82
+  }
+}
