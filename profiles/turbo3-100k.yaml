@@ -1,0 +1,13 @@
+name: turbo3-100k
+description: TurboQuant turbo3 profile derived from scripts/run-turbo.sh for the RTX 3090 milestone target.
+model_path: /models/mistralai_Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M.gguf
+alias: local
+context_size: 100000
+cache_type_k: turbo3
+cache_type_v: turbo3
+gpu_layers: 99
+extra_args: []
+verification:
+  required_cache_capability: turbo3
+  expected_context_length: 100000
+  startup_timeout_seconds: 180

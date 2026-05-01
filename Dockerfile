@@ -1,16 +1,7 @@
-# TurboQuant llama.cpp — CUDA Build
-# Builds llama-server with TurboQuant KV-cache quantization support
-# turbo2 / turbo3 / turbo4 cache types enabled
-#
-# CRITICAL: Use --branch feature/turboquant-kv-cache (NOT master!)
-# The master branch is a standard llama.cpp without TurboQuant support.
-#
-# Usage:
-#   docker build -t turboquant:feature .
-#   docker run --rm turboquant:feature llama-server -h 2>&1 | grep -A3 "cache-type-k"
-#   # Must show: turbo2, turbo3, turbo4
+# qllama — TurboQuant-capable llama.cpp runtime with FastAPI control plane
+# Builds llama-server from the TurboQuant fork, then packages qllama as the public service.
 
-FROM nvidia/cuda:12.6.3-devel-ubuntu22.04
+FROM nvidia/cuda:12.6.3-devel-ubuntu22.04 AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
@@ -26,31 +17,72 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /build
 
 # CRITICAL: Must use --branch feature/turboquant-kv-cache
-# Default 'master' does NOT have turbo2/turbo3/turbo4 cache types!
+# Default 'master' does NOT have turbo2/turbo3/turbo4 cache types.
 RUN git clone https://github.com/TheTom/llama-cpp-turboquant.git \
     --branch feature/turboquant-kv-cache \
     --depth=1
 
 WORKDIR /build/llama-cpp-turboquant
 
-# Fix: libcuda.so.1 is not available at build time (driver is injected at runtime only)
-# The devel image provides a stub at /usr/local/cuda/lib64/stubs/libcuda.so
-# Symlink to .1 so the linker finds it during cmake build
+# Fix: libcuda.so.1 is not available at build time (driver is injected at runtime only).
 RUN ln -sf /usr/local/cuda/lib64/stubs/libcuda.so \
            /usr/local/cuda/lib64/stubs/libcuda.so.1 \
     && echo "/usr/local/cuda/lib64/stubs" > /etc/ld.so.conf.d/cuda-stubs.conf \
     && ldconfig
 
-# IMPORTANT: Use -DGGML_CUDA=ON (not -DLLAMA_CUBLAS=ON which was renamed in ~2024)
 RUN cmake -B build \
     -DGGML_CUDA=ON \
     -DCMAKE_BUILD_TYPE=Release \
     && cmake --build build --config Release -j4 --target llama-server
 
-RUN cp build/bin/llama-server /usr/local/bin/llama-server
+FROM nvidia/cuda:12.6.3-runtime-ubuntu22.04
 
-WORKDIR /models
-EXPOSE 8180
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    QLLAMA_HOST=0.0.0.0 \
+    QLLAMA_PORT=8000 \
+    QLLAMA_INTERNAL_HOST=127.0.0.1 \
+    QLLAMA_INTERNAL_PORT=8010 \
+    QLLAMA_PROFILE=baseline \
+    QLLAMA_PROFILES_DIR=/app/profiles \
+    QLLAMA_MODEL_ROOT=/models \
+    QLLAMA_LOG_FORMAT=json \
+    QLLAMA_METRICS_ENABLED=true \
+    QLLAMA_INCLUDE_UPSTREAM_METRICS=true
 
-# Default: show help. Override CMD in docker run to actually serve a model.
-CMD ["llama-server", "--help"]
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    ca-certificates \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY --from=builder /build/llama-cpp-turboquant/build/bin /opt/llama/bin
+RUN ln -sf /opt/llama/bin/llama-server /usr/local/bin/llama-server \
+    && echo "/opt/llama/bin" > /etc/ld.so.conf.d/llama-bin.conf \
+    && ldconfig
+COPY pyproject.toml README.md /app/
+COPY qllama /app/qllama
+COPY profiles /app/profiles
+COPY scripts /app/scripts
+
+RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && python3 -m pip install --no-cache-dir \
+        fastapi \
+        httpx \
+        pydantic \
+        PyYAML \
+        'uvicorn[standard]' \
+    && python3 -m pip install --no-cache-dir .
+
+RUN mkdir -p /models
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=10s --timeout=5s --start-period=20s --retries=3 \
+  CMD curl -fsS http://localhost:8000/health >/dev/null || exit 1
+
+CMD ["python3", "-m", "uvicorn", "qllama.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]

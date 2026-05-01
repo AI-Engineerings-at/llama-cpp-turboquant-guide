@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-engineering.at/qllama/run-result.schema.json",
+  "title": "qllama benchmark run result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "model",
+    "backend_host",
+    "profile",
+    "mode",
+    "context_target",
+    "phase",
+    "prompt_pack",
+    "run_id",
+    "ttft_ms",
+    "tokens_per_sec",
+    "latency_ms",
+    "vram_gb",
+    "rss_gb",
+    "success",
+    "error_type",
+    "fallback_triggered",
+    "selected_backend",
+    "git_rev",
+    "timestamp"
+  ],
+  "properties": {
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "backend_host": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "f16",
+        "turbo2",
+        "turbo3",
+        "turbo4"
+      ]
+    },
+    "context_target": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "cold",
+        "warm",
+        "restart-warm"
+      ]
+    },
+    "prompt_pack": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ttft_ms": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "tokens_per_sec": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "latency_ms": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "vram_gb": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "rss_gb": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "success": {
+      "type": "boolean"
+    },
+    "error_type": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fallback_triggered": {
+      "type": "boolean"
+    },
+    "selected_backend": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "git_rev": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "success": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ttft_ms": {
+            "type": "number",
+            "minimum": 0
+          },
+          "tokens_per_sec": {
+            "type": "number",
+            "minimum": 0
+          },
+          "latency_ms": {
+            "type": "number",
+            "minimum": 0
+          },
+          "error_type": {
+            "type": "null"
+          },
+          "selected_backend": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "success": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "error_type": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
+}

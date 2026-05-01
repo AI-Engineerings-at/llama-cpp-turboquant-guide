@@ -1,0 +1,14 @@
+.git
+.gsd
+.gsd-id
+.bg-shell
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+node_modules/
+.env
+.env.*
+results/

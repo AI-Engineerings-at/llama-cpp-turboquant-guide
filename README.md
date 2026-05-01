@@ -48,10 +48,14 @@ This repo documents our setup on two consumer GPUs — what we ran into, what we
 **What's in this repo:**
 | File | Description |
 |------|-------------|
-| `Dockerfile` | Builds llama.cpp with TurboQuant (correct repo, branch, cmake flags) |
-| `scripts/run-baseline.sh` | Starts llama-server with f16 cache, 8K context |
-| `scripts/run-turbo.sh` | Starts llama-server with turbo3 cache, 100K context |
+| `Dockerfile` | Builds the TurboQuant-enabled `llama-server` binary and packages qllama as the container entrypoint |
+| `qllama/` | FastAPI control plane, profile loading, startup gating, and OpenAI-compatible proxy surface |
+| `profiles/` | Declarative runtime profiles such as `baseline` and `turbo3-100k` |
+| `scripts/run-baseline.sh` | Starts raw llama-server with f16 cache, 8K context |
+| `scripts/run-turbo.sh` | Starts raw llama-server with turbo3 cache, 100K context |
+| `scripts/run-qllama.sh` | Starts the qllama wrapper locally with a selected profile |
 | `scripts/download-model.sh` | Downloads model from HuggingFace via API |
+| `scripts/smoke/runtime-core.sh` | Docker smoke verification for qllama runtime-core success and fail-closed behavior |
 | `results/` | Raw benchmark JSON — all runs, both GPUs |
 | `WHITEPAPER.de.md` | German white paper |
 
@@ -173,11 +177,13 @@ Branch: `feature/turboquant-kv-cache` — **not `master`** (which is a standard 
 
 ### 1. Build the Docker image (~20 min)
 
+Use the same local image tag that the smoke scripts default to: `qllama:dev`.
+
 ```bash
-docker build -t turboquant:feature .
+docker build -t qllama:dev .
 
 # Verify TurboQuant is compiled in — must show turbo2, turbo3, turbo4:
-docker run --rm turboquant:feature llama-server -h 2>&1 | grep turbo
+docker run --rm qllama:dev llama-server -h 2>&1 | grep turbo
 ```
 
 ### 2. Download model (~14 GB)
@@ -202,6 +208,49 @@ bash scripts/run-turbo.sh
 ```
 
 ### 5. Test
+
+```bash
+# Runtime-core proof (fail-closed invalid profile + ready path + OpenAI proxy)
+bash scripts/smoke/runtime-core.sh
+
+# S02 operability proof (metrics + auth + logs + degraded/recovery)
+bash scripts/smoke/operability.sh
+```
+
+### 6. qllama operability surfaces
+
+qllama now exposes wrapper-owned operational surfaces in front of the internal `llama-server` child:
+
+- `GET /health` — process liveness for Docker/Kubernetes probes
+- `GET /ready` — fail-closed readiness; returns `503` until qllama is truly ready and during degraded state
+- `GET /metrics` — Prometheus scrape surface for qllama wrapper metrics, with best-effort upstream `llama-server` metrics appended when available
+- `GET /v1/models`, `POST /v1/chat/completions` — authenticated OpenAI-compatible API surface
+
+**Auth posture:** `/v1/*` is secure by default. Set `QLLAMA_API_KEYS` to one or more comma-separated bearer tokens. `/health`, `/ready`, and `/metrics` stay unauthenticated for probes and scraping.
+
+```bash
+# Example authenticated request
+export QLLAMA_API_KEYS=dev-token
+curl -s http://localhost:8000/v1/models \
+  -H "Authorization: Bearer dev-token"
+
+# Metrics scrape
+curl -s http://localhost:8000/metrics | grep '^qllama_'
+```
+
+### 6b. Downstream consumer contracts
+
+qllama is now consumed by two explicit stack-facing seams:
+
+- `phantom-ai` Voice Gateway via the parallel-first OpenAI-compatible path from S03
+- `OAth-brige` via explicit `qllama/<profile>` model identifiers mapped to configured local backend URLs in S04
+
+Important boundary rules:
+- qllama stays an authenticated OpenAI-compatible backend; it does **not** grow Ollama-native `/api/*` parity for consumers.
+- `OAth-brige` treats qllama as a **profile-based local backend**, not as a vault-managed provider account.
+- qllama now exposes explicit in-process Zeroth hook seams around the proxy path. They are wired by default as no-op hooks and toggled by `QLLAMA_ZEROTH_HOOKS_ENABLED`, but M001 still does **not** implement the Zeroth safety layer itself.
+
+### 7. Raw OpenAI-compatible checks
 
 ```bash
 # Check context length
@@ -307,7 +356,7 @@ curl -s -H "Authorization: Bearer $HF_TOKEN" \
 
 ```bash
 # 1. Build and start baseline server
-docker build -t turboquant:feature .
+docker build -t qllama:dev .
 bash scripts/run-baseline.sh
 sleep 45
 
@@ -409,10 +458,10 @@ Größerer Context bedeutet: längere Dokumente verarbeiten, besseres RAG, mehr 
 
 ```bash
 # Image bauen (~20 Minuten)
-docker build -t turboquant:feature .
+docker build -t qllama:dev .
 
 # TurboQuant-Unterstützung prüfen (muss turbo2, turbo3, turbo4 zeigen):
-docker run --rm turboquant:feature llama-server -h 2>&1 | grep turbo
+docker run --rm qllama:dev llama-server -h 2>&1 | grep turbo
 
 # Modell herunterladen (~14 GB)
 export HF_TOKEN=dein_token

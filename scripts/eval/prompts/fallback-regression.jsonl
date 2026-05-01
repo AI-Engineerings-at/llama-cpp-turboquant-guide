@@ -1,0 +1,6 @@
+{"id":"fallback_health_ping_v1","category":"fallback","input":"Reply with exactly: fallback path ok","expected_markers":["fallback path ok"]}
+{"id":"fallback_json_identity_v1","category":"fallback","input":"Return strict JSON with keys status and model_family. Values must be short strings.","expected_markers":["status","model_family"]}
+{"id":"fallback_one_sentence_answer_v1","category":"fallback","input":"In one short sentence, explain why a fallback model exists.","expected_markers":["fallback"]}
+{"id":"fallback_chain_recall_v1","category":"fallback","input":"Name the runtime primary model in one short line. Do not explain.","expected_markers":["gemma4"]}
+{"id":"fallback_short_reasoning_v1","category":"fallback","input":"Give one practical tradeoff of using a smaller fallback model. Keep it under 15 words.","expected_markers":["model"]}
+{"id":"fallback_cpu_safety_v1","category":"fallback","input":"Reply with exactly three comma-separated words describing a CPU fallback path.","expected_markers":[","]}

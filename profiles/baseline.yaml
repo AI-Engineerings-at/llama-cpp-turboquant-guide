@@ -1,0 +1,12 @@
+name: baseline
+description: Baseline f16 KV-cache reference profile derived from scripts/run-baseline.sh.
+model_path: /models/mistralai_Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M.gguf
+alias: local
+context_size: 8192
+cache_type_k: f16
+cache_type_v: f16
+gpu_layers: 99
+extra_args: []
+verification:
+  expected_context_length: 8192
+  startup_timeout_seconds: 90

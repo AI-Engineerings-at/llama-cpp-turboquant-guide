@@ -1,0 +1,10 @@
+{"id":"runtime_models_inventory_v1","category":"runtime","input":"Return a compact JSON object with keys: service, model, context_length, cache_type_k, cache_type_v. Use no markdown.","expected_markers":["service","model","context_length"]}
+{"id":"runtime_short_greeting_v1","category":"runtime","input":"Reply with exactly this text and nothing else: qllama runtime check ok","expected_markers":["qllama runtime check ok"]}
+{"id":"runtime_two_sentence_summary_v1","category":"runtime","input":"In exactly two sentences, explain what TurboQuant changes and what it does not change.","expected_markers":["TurboQuant","KV"]}
+{"id":"runtime_bullet_constraints_v1","category":"runtime","input":"List exactly three short bullet points about safe local inference operations. Keep each bullet under 10 words.","expected_markers":["- "]}
+{"id":"runtime_structured_answer_v1","category":"structured_output","input":"Answer as strict JSON with keys status, risk, next_step. Values must all be strings.","expected_markers":["status","risk","next_step"]}
+{"id":"runtime_tooling_summary_v1","category":"reasoning","input":"Name the likely tradeoff between longer context and throughput in one short paragraph. Mention context and latency explicitly.","expected_markers":["context","latency"]}
+{"id":"runtime_auth_surface_v1","category":"ops","input":"In one sentence, explain why authenticated /v1 routes and unauthenticated /health can coexist safely.","expected_markers":["/v1","/health"]}
+{"id":"runtime_multiturn_anchor_v1","category":"conversation","input":"Remember this code word for the next turn only: ORBIT-17. Confirm in one sentence.","expected_markers":["ORBIT-17"]}
+{"id":"runtime_multiturn_recall_v1","category":"conversation","input":"What code word were you asked to remember for the next turn? Reply with only the code word.","expected_markers":["ORBIT-17"]}
+{"id":"runtime_longish_explainer_v1","category":"reasoning","input":"Explain in 120 to 160 words why fail-closed readiness is useful for a wrapper in front of llama-server.","expected_markers":["ready","llama-server"]}

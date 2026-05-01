@@ -1,0 +1,13 @@
+name: turbo3-64k-4070
+description: Best-effort local verification profile for the RTX 4070 laptop path documented in results/turboquant-4070-results-2026-04-01.json.
+model_path: /models/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf
+alias: local
+context_size: 64000
+cache_type_k: turbo3
+cache_type_v: turbo3
+gpu_layers: 99
+extra_args: []
+verification:
+  required_cache_capability: turbo3
+  expected_context_length: 64000
+  startup_timeout_seconds: 120
